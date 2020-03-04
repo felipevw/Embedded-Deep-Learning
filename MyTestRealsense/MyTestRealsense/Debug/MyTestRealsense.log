@@ -1,0 +1,2 @@
+﻿  MyTestRealsense.cpp
+opencv_world420d.lib(opencv_world420d.dll) : fatal error LNK1112: tipo de equipo del módulo 'x64' en conflicto con tipo de equipo de destino 'x86'

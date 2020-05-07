@@ -55,8 +55,13 @@ cv::Mat ImageProcess::getPreprocess()
 	//					NOISE REDUCTION
 
 	//-------------------------------------------------------------
+	cv::Mat imBiFiltered;
+	int diam{ 9 };
+	double sigmaColor{ 75 };
+	double sigmaSpace{ 75 };
+	cv::bilateralFilter(imEqClahe, imBiFiltered, diam, sigmaColor, sigmaSpace, cv::BORDER_DEFAULT);
 
-	return imEqClahe;
+	return imBiFiltered;
 }
 
 ImageProcess::~ImageProcess()

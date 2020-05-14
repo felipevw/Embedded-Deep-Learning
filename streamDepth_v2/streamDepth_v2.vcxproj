@@ -104,13 +104,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\opencv\build\include;C:\Program Files (x86)\Intel RealSense SDK 2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\opencv\build\include;C:\Program Files (x86)\Intel RealSense SDK 2.0\include;D:\opencv_cmake\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\opencv\build\x64\vc15\lib;C:\Program Files (x86)\Intel RealSense SDK 2.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world420.lib;realsense2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\opencv\build\x64\vc15\lib;C:\Program Files (x86)\Intel RealSense SDK 2.0\lib\x64;D:\opencv_cmake\install\x64\vc16\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world420.lib;realsense2.lib;opencv_xphoto420.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -141,25 +141,27 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\opencv\build\include;C:\Program Files (x86)\Intel RealSense SDK 2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\opencv\build\include;C:\Program Files (x86)\Intel RealSense SDK 2.0\include;D:\opencv_cmake\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\opencv\build\x64\vc15\lib;C:\Program Files (x86)\Intel RealSense SDK 2.0\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world420.lib;realsense2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\opencv\build\x64\vc15\lib;C:\Program Files (x86)\Intel RealSense SDK 2.0\lib\x64;D:\opencv_cmake\install\x64\vc16\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world420.lib;realsense2.lib;opencv_xphoto420.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ImageProcess.cpp" />
     <ClCompile Include="streamDepth_v2.cpp" />
+    <ClCompile Include="videostab.cpp" />
     <ClCompile Include="VideoStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cv-helpers.hpp" />
     <ClInclude Include="ImageProcess.h" />
+    <ClInclude Include="videostab.h" />
     <ClInclude Include="VideoStream.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

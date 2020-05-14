@@ -25,7 +25,6 @@ cv::Mat ImageProcess::getPreprocess()
 	}
 	else
 	{
-		std::cout << "No CUDA image processing" << std::endl;
 
 		// Convert to HSV
 		cv::Mat imhsv;
@@ -55,13 +54,17 @@ cv::Mat ImageProcess::getPreprocess()
 	//					NOISE REDUCTION
 
 	//-------------------------------------------------------------
-	cv::Mat imBiFiltered;
-	int diam{ 9 };
-	double sigmaColor{ 75 };
-	double sigmaSpace{ 75 };
-	cv::bilateralFilter(imEqClahe, imBiFiltered, diam, sigmaColor, sigmaSpace, cv::BORDER_DEFAULT);
+	// Sharpen image using "unsharp mask" algorithm
+	cv::Mat blurred; 
+	double sigma = 1, threshold = 5, amount = 1;
+	cv::GaussianBlur(imEqClahe, blurred, cv::Size(), sigma, sigma);
+	
+	cv::Mat lowContrastMask = abs(imEqClahe - blurred) < threshold;
+	
+	cv::Mat sharpened = imEqClahe * (1 + amount) + blurred * (-amount);
+	imEqClahe.copyTo(sharpened, lowContrastMask);
 
-	return imBiFiltered;
+	return sharpened;
 }
 
 ImageProcess::~ImageProcess()

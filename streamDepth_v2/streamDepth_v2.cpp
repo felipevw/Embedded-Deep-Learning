@@ -8,9 +8,12 @@
 // include OpenCV header file
 #include <opencv2/opencv.hpp>
 
+#include <opencv2/xphoto.hpp>
+
 #include "VideoStream.h"
 #include "cv-helpers.hpp"
 #include "ImageProcess.h"
+#include "videostab.h"
 
 
 // Camera parameters
@@ -19,7 +22,6 @@ const size_t FRAME_WIDTH{ 640 };
 const size_t FRAME_RATE{ 60 };
 const float WHRatio = static_cast<float>(FRAME_WIDTH) / static_cast<float>(FRAME_HEIGHT);
 cv::Mat color_mat(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC3);
-cv::Mat color_mat_processed(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC3);
 cv::Mat depth_mat(FRAME_HEIGHT, FRAME_WIDTH, CV_16UC1);
 
 VideoStream videostream;
@@ -49,8 +51,56 @@ int main() try
     const auto window_rgb{ "RGB Stream 640 x 480" };
     const auto window_depth{ "Depth Stream 640 x 480" };
     VideoStream::getWindowRGBD(window_rgb, window_depth);
+
     
     int key{};
+    //------------------------------------------------------
+    //                    INITIAL SCREEN
+
+    cv::Mat apple_init = cv::imread("apple_init.png");
+    cv::xphoto::oilPainting(apple_init, apple_init, 10, 1, cv::ColorConversionCodes::COLOR_BGR2Lab);
+
+    while (true)
+    {
+        key = cv::waitKey(10);
+
+        videostream.getNextFrame(align_to, pipe, color_mat);
+        
+        // Blend
+        double alpha = 0.5; double beta; double input;
+        beta = (1.0 - alpha);
+        cv::Mat blended_img;
+        cv::addWeighted(color_mat, alpha, apple_init, beta, 0.0, blended_img);
+
+        std::string initmsg{ "Apple Detector" };
+        std::string authormsg{ "Felipe VW" };
+        std::string keymsg1{ "Press ESC to continue and exit" };
+        std::string keymsg2{ "Press E to enhance frames" };
+        std::string keymsg3{ "Press I to perform inference" };
+        std::string keymsg4{ "Press S to enable superresolution" };
+
+        int xPos{ 210 }, yPos{ 100 }, offset1{ -60 }, offset2{ 50 };
+        cv::putText(blended_img, initmsg, cv::Point(xPos, yPos), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
+        cv::putText(blended_img, authormsg, cv::Point(xPos + 40, yPos + 40), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 2);
+
+        cv::putText(blended_img, keymsg1, cv::Point(xPos + offset1, yPos + 40 + offset2), cv::FONT_HERSHEY_SIMPLEX, 0.7f, cv::Scalar(152, 255, 152), 2);
+        cv::putText(blended_img, keymsg2, cv::Point(xPos + offset1, yPos + 40 + offset2 * 2), cv::FONT_HERSHEY_SIMPLEX, 0.7f, cv::Scalar(152, 255, 152), 2);
+        cv::putText(blended_img, keymsg3, cv::Point(xPos + offset1, yPos + 40 + offset2 * 3), cv::FONT_HERSHEY_SIMPLEX, 0.7f, cv::Scalar(152, 255, 152), 2);
+        cv::putText(blended_img, keymsg4, cv::Point(xPos + offset1, yPos + 40 + offset2 * 4), cv::FONT_HERSHEY_SIMPLEX, 0.7f, cv::Scalar(152, 255, 152), 2);
+
+
+        cv::imshow(window_rgb, blended_img);
+
+        // Press ESC to exit loop
+        if (key == 27)
+        {
+            break;
+        }
+    }
+
+
+    //------------------------------------------------------
+
     //------------------------------------------------------
     //                         THREAD
     // Enqueue frames
@@ -62,7 +112,12 @@ int main() try
             // Make sure the frames are spatially aligned
             frames = align_to.process(frames);
 
-            queue_depth.enqueue(frames.get_depth_frame());
+            rs2::frame depth_frame = frames.get_depth_frame();
+            rs2::frame filtered = videostream.FilterDepthFrame(depth_frame);
+            queue_depth.enqueue(filtered);
+
+
+            //queue_depth.enqueue(frames.get_depth_frame());
             queue_rgb.enqueue(frames.get_color_frame());
 
             // Press ESC to exit loop
@@ -74,15 +129,45 @@ int main() try
         });
         
     //------------------------------------------------------
-    
-    
+
+
+   //------------------------------------------------------
+   //                    MAIN LOOP
+
     rs2::frame depth_frame;
     rs2::frame rgb_frame;
+    bool enableImageProcess{ false };
+
+
+    // Videostab
+    cv::Mat frame_2, frame2;
+    cv::Mat frame_1, frame1;
+
+    // Convert to opencv Mat format
+    frame_1 = color_mat;
+    cv::cvtColor(frame_1, frame1, cv::ColorConversionCodes::COLOR_BGR2GRAY);
+    cv::Mat smoothedMat(2, 3, CV_64F);
+
+    //Create a object of stabilization class
+    VideoStab stab;
+
+
+
     while (true)
     {
         videostream.timeStart();
-        key = cv::waitKey(15);
+        key = cv::waitKey(10);
 
+        if (queue_rgb.poll_for_frame(&rgb_frame))
+        {
+            // Get the frame
+            rgb_frame.get_data();
+
+            // Convert to opencv Mat format
+            color_mat = frame_to_mat(rgb_frame);
+            
+        }
+        
         // Depth frames dequeue
         if (queue_depth.poll_for_frame(&depth_frame))
         {
@@ -99,21 +184,43 @@ int main() try
             cv::imshow(window_depth, depth_frame_mat);
         }
         
-
-        if (queue_rgb.poll_for_frame(&rgb_frame))
+        //------------------------------------------------------
+        //                 IMAGE ENHANCEMENT
+        // Press 'e' for image enhancement and 'E' for reverse
+        if (key == 101)
         {
-            // Get the frame
-            rgb_frame.get_data();
-
-            // Convert to opencv Mat format
-            color_mat = frame_to_mat(rgb_frame);
-            
+            enableImageProcess = true;
         }
-        // Image preprocessing
-        imageprocess.setPreprocess(color_mat);
-        color_mat_processed = imageprocess.getPreprocess();
-        
-        cv::imshow(window_rgb, color_mat_processed);
+        else if (key == 69)
+        {
+            enableImageProcess = false;
+
+        }
+        if (enableImageProcess == true)
+        {
+            // Image preprocessing
+            imageprocess.setPreprocess(color_mat);
+            cv::Mat color_mat_processed = imageprocess.getPreprocess();
+            color_mat_processed.copyTo(color_mat);
+        }
+        //------------------------------------------------------
+
+
+        //------------------------------------------------------
+        //                 IMAGE STABILIZATION
+
+        cv::Mat smoothedFrame;
+        frame_2 = color_mat;
+        smoothedFrame = stab.stabilize(frame_1, frame_2);
+
+        cv::cvtColor(frame_2, frame2, cv::ColorConversionCodes::COLOR_BGR2GRAY);
+
+        frame_1 = frame_2.clone();
+        frame2.copyTo(frame1);
+        //------------------------------------------------------
+
+
+        cv::imshow(window_rgb, smoothedFrame);
         
         // Press ESC to exit loop
         if (key == 27)

@@ -42,6 +42,13 @@ rs2::align VideoStream::setStreamRGBD(rs2_stream stream_type1, rs2_stream stream
     // Spatial alignment stream of frames
     rs2::align align_to(RS2_STREAM_COLOR);
 
+
+    // Configure filter parameters
+    spatial_filter.set_option(RS2_OPTION_FILTER_MAGNITUDE, 3.0f);
+    spatial_filter.set_option(RS2_OPTION_FILTER_SMOOTH_ALPHA, 0.52f);
+    spatial_filter.set_option(RS2_OPTION_FILTER_SMOOTH_DELTA, 7.0f);
+    hole_filter.set_option(RS2_OPTION_HOLES_FILL, 1);
+
     return align_to;
 }
 
@@ -87,6 +94,12 @@ void VideoStream::getNextFrame(rs2::align align_to, rs2::pipeline pipe, cv::Mat&
     // Convert to opencv Mat format
     color_matrix = frame_to_mat(color);
     
+}
+
+rs2::frame VideoStream::FilterDepthFrame(rs2::frame frame_to_filter)
+{
+    // Filter the frame
+    return hole_filter.process(spatial_filter.process(frame_to_filter));
 }
 
 void VideoStream::timeStart()

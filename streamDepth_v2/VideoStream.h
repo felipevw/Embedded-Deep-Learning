@@ -27,7 +27,7 @@ public:
 	static void getNextFrame(rs2::align align_to, rs2::pipeline pipe, cv::Mat& color_matrix);
 
 	rs2::depth_sensor getDepthSensor();
-
+	rs2::frame FilterDepthFrame(rs2::frame frame_to_filter);
 
 
 	void timeStart();
@@ -37,12 +37,17 @@ public:
 	~VideoStream();
 
 private:
+	// Main pipeline and configuration
 	rs2::pipeline pipe;
 	rs2::config cfg;
 
+	// Depth sensor
 	rs2::pipeline_profile profile;
 	rs2::device dev;
 	
+	// Detph filter
+	rs2::spatial_filter spatial_filter;
+	rs2::hole_filling_filter hole_filter;
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> timeCount;
 	std::chrono::time_point<std::chrono::high_resolution_clock> timeStopCount;

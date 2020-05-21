@@ -80,7 +80,6 @@ Mat VideoStab::stabilize(Mat frame_1, Mat frame_2)
     //cout<<affine;
     //flush(cout);
 
-    //affine = affineTransform(goodFeatures1 , goodFeatures2);
 
     dx = affine.at<double>(0, 2);
     dy = affine.at<double>(1, 2);
@@ -132,20 +131,15 @@ Mat VideoStab::stabilize(Mat frame_1, Mat frame_2)
 
 
     //Warp the new frame using the smoothed parameters CUDA
-    //cv::cuda::GpuMat frame_1_gpu, smoothedFrame_gpu, smoothedMat_gpu;
-    //frame_1_gpu.upload(frame_1);
-    //smoothedMat_gpu.upload(smoothedMat);
-    //cv::cuda::warpAffine(frame_1_gpu, smoothedFrame_gpu, smoothedMat_gpu, frame_2.size());
-    //smoothedFrame_gpu.download(smoothedFrame);
-    
-    cv::warpAffine(frame_1, smoothedFrame, smoothedMat, frame_2.size());
+    cv::cuda::GpuMat frame_1_gpu, smoothedFrame_gpu, smoothedMat_gpu;
+    frame_1_gpu.upload(frame_1);
+    smoothedMat_gpu.upload(smoothedMat);
+    cv::cuda::warpAffine(frame_1_gpu, smoothedFrame_gpu, smoothedMat, frame_2.size());
+    smoothedFrame_gpu.download(smoothedFrame);
 
     //Crop the smoothed frame a little to eliminate black region due to Kalman Filter
-    smoothedFrame = smoothedFrame(Range(vert_border, smoothedFrame.rows - vert_border), Range(HORIZONTAL_BORDER_CROP, smoothedFrame.cols - HORIZONTAL_BORDER_CROP));
+    smoothedFrame_gpu = smoothedFrame_gpu(Range(vert_border, smoothedFrame.rows - vert_border), Range(HORIZONTAL_BORDER_CROP, smoothedFrame.cols - HORIZONTAL_BORDER_CROP));
 
-    //cv::resize(smoothedFrame, smoothedFrame, frame_2.size());
-    cv::cuda::GpuMat smoothedFrame_gpu;
-    smoothedFrame_gpu.upload(smoothedFrame);
     cv::cuda::resize(smoothedFrame_gpu, smoothedFrame_gpu, frame_2.size());
     smoothedFrame_gpu.download(smoothedFrame);
 

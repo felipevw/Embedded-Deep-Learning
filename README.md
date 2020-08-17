@@ -46,6 +46,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+[![Product Name Screen Shot][product-screenshot]](https://example.com)
+
 This master's thesis was realized under the supervision of Dr. inz. Andzrej Kordecki for the Warsaw University of Technology.
 
 ### Built With
@@ -124,4 +126,4 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/felipe-verdes-wolukanis/
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: other/apple_tree_inf.png

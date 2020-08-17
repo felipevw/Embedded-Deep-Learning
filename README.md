@@ -23,7 +23,7 @@
 </h3>
 
   <p align="center">
-    YOUR_SHORT_DESCRIPTION
+     this master thesis presents an object detection vision system for agricultural applications that improves object detection using image enhancement, super resolution and video stabilization. The vision system performs object detection in a close or far mode. Additionally, in the close mode the system outputs the real object position. The program was deployed in an embedded system along with a camera that streams color and depth frames. 
     <br />
     <a href="https://github.com/github_username/repo"><strong>Explore the docs »</strong></a>
     <br />

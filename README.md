@@ -23,16 +23,8 @@
 </h3>
 
   <p align="center">
-     this master thesis presents an object detection vision system for agricultural applications that improves object detection using image enhancement, super resolution and video stabilization. The vision system performs object detection in a close or far mode. Additionally, in the close mode the system outputs the real object position. The program was deployed in an embedded system along with a camera that streams color and depth frames. 
+     This master thesis presents an object detection vision system for agricultural applications that improves object detection using image enhancement, super resolution and video stabilization. The vision system performs object detection in a close or far mode. Additionally, in the close mode the system outputs the real object position. The program was deployed in an embedded system along with a camera that streams color and depth frames. 
     <br />
-    <a href="https://github.com/github_username/repo"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/github_username/repo">View Demo</a>
-    ·
-    <a href="https://github.com/github_username/repo/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/github_username/repo/issues">Request Feature</a>
   </p>
 </p>
 
@@ -47,10 +39,6 @@
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
 * [Usage](#usage)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
-* [License](#license)
-* [Contact](#contact)
 * [Acknowledgements](#acknowledgements)
 
 
@@ -58,19 +46,19 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
-Here's a blank template to get started:
-**To avoid retyping too much info. Do a search and replace with your text editor for the following:**
-`github_username`, `repo`, `twitter_handle`, `email`
-
+This master's thesis was realized under the supervision of Dr. inz. Andzrej Kordecki for the Warsaw University of Technology.
 
 ### Built With
 
-* []()
-* []()
-* []()
+1. Hardware
+* []() Nvidia Jetson Nano Developer Kit
+* []() Intel RealSense Depth Camera D435
 
+2. Software
+* []() OpenCV 4.3.0
+* []() RealSense SDK 2.31.0
+* []() RealSense firmware 05.12.01.00 
+* []() JetPack v4.3 | L4T R32.3.1
 
 
 <!-- GETTING STARTED -->
